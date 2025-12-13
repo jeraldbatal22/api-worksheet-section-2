@@ -165,7 +165,7 @@ app.use(errorMiddleware);
 
 if (process.env.NODE_ENV !== "test") {
   app.listen(PORT, async () => {
-    await connectToDatabase();
+    // await connectToDatabase();
     console.log(`Server running at http://localhost:${PORT}`);
   });
 }
