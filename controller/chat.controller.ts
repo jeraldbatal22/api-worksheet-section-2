@@ -1,19 +1,38 @@
 import type { Request, Response, NextFunction } from 'express';
 import ChatService from '../services/chat.service.ts';
 import type { AuthRequest } from '../dto/auth.dto.ts';
+import { createUploader } from '../utils/upload.utils.ts';
 
 class ChatController {
   /**
    * Send a new chat message.
    * Expects body: { content: string, sender_id: number, receiver_id: number, file_url?: string }
    */
-  async sendMessage(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+  async sendMessage(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       if (!req.user) {
-        res.status(401).json({ error: 'Unauthorized' });
-        return;
+        return res.status(401).json({ error: 'Unauthorized' });
       }
+      console.log(req.user)
+      const upload = createUploader({
+        folder: `uploads/chats/${req.user.id}`,
+        maxSizeMB: 2,
+        allowedTypes: ["image/jpeg", "image/png"],
+      }).single("image");
 
+      await new Promise<void>((resolve, reject) => {
+        upload(req, res, (err) => {
+          if (err) {
+            console.log(err, "err")
+            reject(err)
+          } else resolve();
+        });
+      });
+  
+      if (!req.file) {
+        return res.status(401).json({ error: 'No files uploaded' });
+      }
+      console.log(req.file, "req.file")
       const { content, receiver_id, file_url } = req.body;
       const created = await ChatService.sendMessage({ content, sender_id: req.user?.id, receiver_id, file_url });
       res.status(201).json({ data: created });
