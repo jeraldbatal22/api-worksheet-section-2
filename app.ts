@@ -86,16 +86,7 @@ function isSessionValid(token: string): any {
 
 // ROUTES
 app.get("/", (req, res) => {
-  const query = "Select * from users";
-
-  pgDatabase.query(query, (err, result) => {
-    if (err) {
-      throw new Error((err as any) || "ERROR");
-    }
-    return res.send({
-      data: result.rows,
-    });
-  });
+  res.send("HELLO")
 });
 app.use("/api/v1/auth", authRouter);
 app.get("/api/v1/protected", authorizeMiddleware, (req, res) => {
@@ -164,9 +155,9 @@ function createSession(): T_Session {
 app.use(errorMiddleware);
 
 if (process.env.NODE_ENV !== "test") {
-  app.listen(PORT || 3000, async () => {
+  app.listen(8080, async () => {
     // await connectToDatabase();
-    console.log(`Server running at http://localhost:${PORT || 3000}`);
+    console.log(`Server running at http://localhost:${8080}`);
   });
 }
 
