@@ -164,7 +164,7 @@ function createSession(): T_Session {
 app.use(errorMiddleware);
 
 if (process.env.NODE_ENV !== "test") {
-  app.listen(PORT, async () => {
+  app.listen(PORT || 3000, async () => {
     // await connectToDatabase();
     console.log(`Server running at http://localhost:${PORT}`);
   });
