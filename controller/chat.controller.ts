@@ -32,9 +32,11 @@ class ChatController {
       if (!req.file) {
         return res.status(401).json({ error: 'No files uploaded' });
       }
-      console.log(req.file, "req.file")
-      const { content, receiver_id, file_url } = req.body;
-      const created = await ChatService.sendMessage({ content, sender_id: req.user?.id, receiver_id, file_url });
+
+      const filePath = `${req.file.destination}/${req.file.filename}`
+
+      const { content, receiver_id } = req.body;
+      const created = await ChatService.sendMessage({ content, sender_id: req.user?.id, receiver_id, file_url: filePath  });
       res.status(201).json({ data: created });
     } catch (error) {
       if (error instanceof Error) {

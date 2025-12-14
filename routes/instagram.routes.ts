@@ -1,34 +1,27 @@
 import { Router } from "express";
-import {
-  createImage,
-  getAllImages,
-  getImage,
-  updateImage,
-  deleteImage,
-  createVideo,
-  getAllVideos,
-  getVideo,
-  updateVideo,
-  deleteVideo,
-  uploadImage,
-  uploadVideo,
-} from "../controller/instagram.controller.ts";
+import instagramPostController from "../controller/instagram-post.controller.ts";
 
-const instagramRouter = Router();
+// Use a router for "Instagram posts" endpoints (handling both images and videos in a generic way)
+const instagramPostRouter = Router();
 
-// Image routes
-instagramRouter.post("/images", uploadImage.single("file"), createImage);
-instagramRouter.get("/images", getAllImages);
-instagramRouter.get("/images/:id", getImage);
-instagramRouter.put("/images/:id", uploadImage.single("file"), updateImage);
-instagramRouter.delete("/images/:id", deleteImage);
+// Create a new Instagram post (image or video upload)
+instagramPostRouter.post("/", (req, res, next) =>
+  instagramPostController.createPost(req, res, next)
+);
 
-// Video routes
-instagramRouter.post("/videos", uploadVideo.single("file"), createVideo);
-instagramRouter.get("/videos", getAllVideos);
-instagramRouter.get("/videos/:id", getVideo);
-instagramRouter.put("/videos/:id", uploadVideo.single("file"), updateVideo);
-instagramRouter.delete("/videos/:id", deleteVideo);
+// Update an Instagram post by id
+instagramPostRouter.put("/:id", (req, res, next) =>
+  instagramPostController.updatePost(req, res, next)
+);
 
-export default instagramRouter;
+// Get all posts for the authenticated user
+instagramPostRouter.get("/", (req, res, next) =>
+  instagramPostController.getAllPostsByUserId(req, res, next)
+);
 
+// Delete a post by id (for authenticated user)
+instagramPostRouter.delete("/:id", (req, res, next) =>
+  instagramPostController.deletePostById(req, res, next)
+);
+
+export default instagramPostRouter;
