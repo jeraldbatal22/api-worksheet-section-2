@@ -18,7 +18,7 @@ class ChatController {
         folder: `uploads/chats/${req.user.id}`,
         maxSizeMB: 2,
         allowedTypes: ["image/jpeg", "image/png"],
-      }).single("image");
+      }).single("file");
 
       await new Promise<void>((resolve, reject) => {
         upload(req, res, (err) => {
@@ -32,8 +32,7 @@ class ChatController {
       if (!req.file) {
         return res.status(401).json({ error: 'No files uploaded' });
       }
-
-      const filePath = `${req.file.destination}/${req.file.filename}`
+      const filePath = `${req.file.destination.split("uploads/")[1]}/${req.file.filename}`
 
       const { content, receiver_id } = req.body;
       const created = await ChatService.sendMessage({ content, sender_id: req.user?.id, receiver_id, file_url: filePath  });
